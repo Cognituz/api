@@ -24,7 +24,7 @@ class CognituzApi::API::Auth < Grape::API
         requires :password
       end
 
-      optional :array, type: Array[String]
+      optional :roles, type: Array[String]
     end
   end
 

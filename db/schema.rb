@@ -10,16 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170114222326) do
+ActiveRecord::Schema.define(version: 20170311021126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "user_taught_subjects", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.string   "level",      null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_taught_subjects_on_user_id", using: :btree
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                               null: false
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "avatar"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -36,6 +44,16 @@ ActiveRecord::Schema.define(version: 20170114222326) do
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
     t.text     "roles",                  default: [],              array: true
+    t.string   "avatar_tmp"
+    t.string   "avatar_processing"
+    t.string   "school_year"
+    t.string   "phone_number"
+    t.integer  "age"
+    t.string   "description"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree

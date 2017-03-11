@@ -19,12 +19,11 @@ gem 'mailgun_rails'
 gem "open_uri_w_redirect_to_https"
 
 # Data layer stuff
-gem "carrierwave", '~> 1.0.0'
-gem "carrierwave-base64"
-gem 'carrierwave_backgrounder', github: 'nicooga/carrierwave_backgrounder'
+gem 'paperclip', '~> 5.0.0'
 gem 'email_validator'
 gem 'grape-active_model_serializers'
 gem 'hashie-forbidden_attributes'
+gem 'searchlight'
 
 # Debugging
 gem 'pry-rails'

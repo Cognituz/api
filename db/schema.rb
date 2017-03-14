@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170311021126) do
+ActiveRecord::Schema.define(version: 20170311024922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,16 +25,16 @@ ActiveRecord::Schema.define(version: 20170311021126) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                               null: false
+    t.string   "email",                                  null: false
     t.string   "first_name"
     t.string   "last_name"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "encrypted_password",        default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",             default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 20170311021126) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.text     "roles",                  default: [],              array: true
+    t.text     "roles",                     default: [],              array: true
     t.string   "avatar_tmp"
     t.string   "avatar_processing"
     t.string   "school_year"
@@ -54,6 +54,10 @@ ActiveRecord::Schema.define(version: 20170311021126) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.boolean  "teaches_online"
+    t.boolean  "teaches_at_own_place"
+    t.boolean  "teaches_at_students_place"
+    t.boolean  "teaches_at_public_place"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree

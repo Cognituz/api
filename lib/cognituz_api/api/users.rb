@@ -2,7 +2,9 @@ class CognituzApi::API::Users < Grape::API
   version :v1, using: :path
 
   resources :users do
-    get { User.all }
+    get {
+      User::Search.run(User, params[:filters] || {}).all
+    }
 
     route_param :id do
       get { User.find params.fetch(:id) }

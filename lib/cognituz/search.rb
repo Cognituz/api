@@ -1,8 +1,9 @@
 module Cognituz::Search
   AREL_OPERATORS = %i[eq matches]
 
-  def run(query, params)
-    filters.inject(query) { |q, f| f.call(q, params) }
+  def run(query, params = {})
+    params = params.with_indifferent_access
+    filters.inject(query) { |q, f| f.call(q, params) }.all
   end
 
   private
@@ -10,9 +11,10 @@ module Cognituz::Search
   def filter(
     name_or_hash,
     required_params: [name_or_hash],
-    operator:        :eq
+    operator:        :eq,
+    &block
   )
-    return filters.push(&block) if block_given?
+    return filters.push(block) if block_given?
 
     filter =
       case name_or_hash

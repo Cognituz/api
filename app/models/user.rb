@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
 
   define_method :'avatar=' do |arg|
     case arg
-    when /^data/, NilClass
+    when /^data/, NilClass, File
       old_avatar_setter.bind(self).(arg)
     end
   end

@@ -24,6 +24,7 @@ gem 'email_validator'
 gem 'grape-active_model_serializers'
 gem 'hashie-forbidden_attributes'
 gem 'searchlight'
+gem 'ffaker'
 
 # Debugging
 gem 'pry-rails'

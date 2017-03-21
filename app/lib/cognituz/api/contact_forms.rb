@@ -1,4 +1,4 @@
-class CognituzApi::API::ContactForms < Grape::API
+class Cognituz::API::ContactForms < Grape::API
   version :v1, using: :path
 
   resources :contact_forms do

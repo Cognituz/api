@@ -1,10 +1,12 @@
-class CognituzApi::API::Users < Grape::API
+class Cognituz::API::Users < Grape::API
   version :v1, using: :path
 
   resources :users do
-    get {
-      User::Search.run(User, params[:filters] || {}).all
-    }
+    paginate per_page: 8
+    get do
+      users = User::Search.run(User, params[:filters] || {}).all
+      present paginate(users), with: Cognituz::API::Entities::User
+    end
 
     route_param :id do
       get { User.find params.fetch(:id) }
@@ -35,6 +37,7 @@ class CognituzApi::API::Users < Grape::API
         User.find(params.fetch(:id)).tap do |u|
           attributes = declared(params).fetch(:user)
           u.update! attributes
+          present u, with: Cognituz::API::Entities::User
         end
       end
     end

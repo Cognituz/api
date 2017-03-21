@@ -11,18 +11,21 @@ gem 'puma', '~> 3.0'
 gem 'pg', '~> 0.18'
 gem 'rack-cors'
 gem "dotenv-rails"
-gem 'grape', '0.19'
-gem 'grape_on_rails_routes'
 gem 'slim'
 gem 'sidekiq'
 gem 'mailgun_rails'
-gem "open_uri_w_redirect_to_https"
+
+# API
+gem 'grape', '~> 0.19.1'
+gem 'grape-entity', '~> 0.6.1'
+gem 'grape_on_rails_routes'
+gem 'hashie-forbidden_attributes'
+gem 'kaminari', '~> 0.17.0'
+gem 'api-pagination', '~> 4.5.2'
 
 # Data layer stuff
 gem 'paperclip', '~> 5.0.0'
 gem 'email_validator'
-gem 'grape-active_model_serializers'
-gem 'hashie-forbidden_attributes'
 gem 'searchlight'
 gem 'ffaker'
 

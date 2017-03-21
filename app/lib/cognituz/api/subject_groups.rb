@@ -1,4 +1,4 @@
-class CognituzApi::API::SubjectGroups < Grape::API
+class Cognituz::API::SubjectGroups < Grape::API
   version :v1, using: :path
   formatter :json, Grape::Formatter::Json
 

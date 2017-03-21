@@ -1,6 +1,6 @@
 require 'jwt'
 
-module CognituzApi::JWT
+module Cognituz::API::JWT
   KEY = Rails.application.secrets.fetch(:secret_key_base)
 
   def self.encode(payload)

@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount CognituzApi::API, at: '/'
+  mount Cognituz::API, at: '/'
 end

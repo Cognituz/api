@@ -1,6 +1,5 @@
-class CognituzApi::API < Grape::API
+class Cognituz::API < Grape::API
   format :json
-  formatter :json, Grape::Formatter::ActiveModelSerializers
 
   helpers do
     def current_user
@@ -11,7 +10,7 @@ class CognituzApi::API < Grape::API
           .try(:match, /\ABearer (.+)\z/)
           .try(:[], 1)
 
-      CognituzApi::JWT.decode_user(token) if token.present?
+      Cognituz::API::JWT.decode_user(token) if token.present?
     end
 
     def handle_resource_action(resource, &block)

@@ -2,9 +2,12 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :taught_subjects,
-    class_name: :TaughtSubject,
-    inverse_of: :user
+  with_options inverse_of: :user do
+    has_many :taught_subjects, class_name: :TaughtSubject
+    has_one :location
+  end
+
+  accepts_nested_attributes_for :location, reject_if: :all_blank
 
   has_attached_file :avatar
   validates_attachment_content_type :avatar,

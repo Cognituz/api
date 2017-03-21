@@ -10,7 +10,7 @@ class CognituzApi::API::Users < Grape::API
       get { User.find params.fetch(:id) }
 
       params do
-        requires :user, type: Hash do
+        group :user, type: Hash do
           with coerce: String do
             optional :avatar
             optional :first_name
@@ -20,14 +20,21 @@ class CognituzApi::API::Users < Grape::API
             optional :age
             optional :description
           end
+
+          optional :location_attributes, type: Hash, default: {} do
+            optional :city
+            optional :district
+            optional :street
+            optional :street_number
+            optional :notes
+          end
         end
       end
 
       put do
-        user = User.find params.fetch(:id)
-
-        handle_resource_action(user) do |u|
-          u.update declared(params).fetch(:user)
+        User.find(params.fetch(:id)).tap do |u|
+          attributes = declared(params).fetch(:user)
+          u.update! attributes
         end
       end
     end

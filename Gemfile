@@ -11,7 +11,7 @@ gem 'puma', '~> 3.0'
 gem 'pg', '~> 0.18'
 gem 'rack-cors'
 gem "dotenv-rails"
-gem 'grape'
+gem 'grape', '0.19'
 gem 'grape_on_rails_routes'
 gem 'slim'
 gem 'sidekiq'

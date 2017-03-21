@@ -30,5 +30,5 @@ class CognituzApi::API < Grape::API
   mount self::Auth
   mount self::Users
   mount self::ContactForms
-  mount self::Subjects
+  mount self::SubjectGroups
 end

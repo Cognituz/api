@@ -9,7 +9,10 @@ class Cognituz::API::Users < Grape::API
     end
 
     route_param :id do
-      get { User.find params.fetch(:id) }
+      get do
+        user = User.find params.fetch(:id)
+        present user, with: Cognituz::API::Entities::User
+      end
 
       params do
         group :user, type: Hash do
@@ -24,8 +27,9 @@ class Cognituz::API::Users < Grape::API
           end
 
           optional :location_attributes, type: Hash, default: {} do
+            optional :id
             optional :city
-            optional :district
+            optional :neighborhood
             optional :street
             optional :street_number
             optional :notes

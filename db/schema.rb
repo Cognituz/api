@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 20170317033325) do
     t.string   "street",        null: false
     t.string   "street_number", null: false
     t.string   "notes"
-    t.string   "district",      null: false
     t.string   "city",          null: false
+    t.string   "neighborhood"
     t.integer  "user_id",       null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false

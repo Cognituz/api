@@ -3,8 +3,8 @@ class Cognituz::API::Entities::User < Cognituz::API::Entities::Base
     :school_year, :phone_number, :email, :teaches_online,
     :teaches_at_own_place, :teaches_at_public_place,
     :teaches_at_students_place, :is_teacher, :is_student
-
   expose :avatar, format_with: :attachment
+  expose :location, using: Cognituz::API::Entities::Location
 
   private
 

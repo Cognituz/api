@@ -26,8 +26,11 @@ class Cognituz::API < Grape::API
     end
   end
 
+  rescue_from(ActiveRecord::RecordInvalid) { |e| error!(e, 422) }
+
   mount self::Auth
   mount self::Users
   mount self::ContactForms
   mount self::SubjectGroups
+  mount self::Neighborhoods
 end

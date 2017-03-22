@@ -3,6 +3,6 @@ class Cognituz::API::SubjectGroups < Grape::API
   formatter :json, Grape::Formatter::Json
 
   resources :subject_groups do
-    get { render User::TaughtSubject::SUBJECTS_BY_LEVEL_AS_JSON }
+    get { User::TaughtSubject::SUBJECTS_BY_LEVEL_AS_JSON }
   end
 end

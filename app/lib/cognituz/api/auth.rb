@@ -1,3 +1,5 @@
+require_dependency 'cognituz/api/jwt'
+
 class Cognituz::API::Auth < Grape::API
   version :v1, using: :path
 
@@ -41,10 +43,10 @@ class Cognituz::API::Auth < Grape::API
       user.roles = [params[:user_type] || :student]
 
       if user.save
-        render token: Cognituz::API::JWT.encode_user(user)
+        { token: Cognituz::API::JWT.encode_user(user) }
       else
         status :unprocessable_entity
-        render error: user.errors.full_messages.to_sentence
+        { error: user.errors.full_messages.to_sentence }
       end
     end
 
@@ -55,7 +57,7 @@ class Cognituz::API::Auth < Grape::API
 
       if user && user.valid_password?(password)
         status :ok
-        render token: Cognituz::API::JWT.encode_user(user)
+        { token: Cognituz::API::JWT.encode_user(user) }
       else
         status :unauthorized
       end
@@ -67,10 +69,10 @@ class Cognituz::API::Auth < Grape::API
 
       if user.save
         status :created
-        render Cognituz::API::JWT.encode_user(user)
+        Cognituz::API::JWT.encode_user(user)
       else
         status :unprocessable_entity
-        render error: user.errors.full_messages.to_sentence
+        { error: user.errors.full_messages.to_sentence }
       end
     end
   end

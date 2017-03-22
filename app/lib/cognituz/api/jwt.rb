@@ -4,11 +4,11 @@ module Cognituz::API::JWT
   KEY = Rails.application.secrets.fetch(:secret_key_base)
 
   def self.encode(payload)
-    JWT.encode payload, KEY
+    ::JWT.encode payload, KEY
   end
 
   def self.decode(token)
-    JWT.decode(token, KEY)
+    ::JWT.decode(token, KEY)
   end
 
   def self.encode_user(user)

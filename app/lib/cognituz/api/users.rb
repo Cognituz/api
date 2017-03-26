@@ -35,6 +35,11 @@ class Cognituz::API::Users < Grape::API
             optional :_destroy, coerce: Boolean
             optional :name, :level, type: String
           end
+
+          optional :availability_periods_attributes, type: Array do
+            optional :id, :week_day, :starts_at_sfsow, :ends_at_sfsow, coerce: Integer
+            optional :_destroy, coerce: Boolean
+          end
         end
       end
 

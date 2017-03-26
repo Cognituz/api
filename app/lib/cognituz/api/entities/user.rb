@@ -5,8 +5,10 @@ class Cognituz::API::Entities::User < Cognituz::API::Entities::Base
     :teaches_at_students_place, :is_teacher, :is_student,
     :neighborhoods, :short_desc, :long_desc
   expose :avatar, format_with: :attachment
-  expose :location, using: Cognituz::API::Entities::Location
-  expose :taught_subjects, with: Cognituz::API::Entities::User::TaughtSubject
+
+  expose :location,             using: Cognituz::API::Entities::Location
+  expose :taught_subjects,      using: self::TaughtSubject
+  expose :availability_periods, using: self::AvailabilityPeriod
 
   private
 

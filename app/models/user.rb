@@ -4,12 +4,13 @@ class User < ActiveRecord::Base
 
   with_options inverse_of: :user do
     has_many :taught_subjects, class_name: :TaughtSubject
+    has_many :availability_periods
     has_one :location
   end
 
   with_options reject_if: :all_blank do
     accepts_nested_attributes_for :location
-    accepts_nested_attributes_for :taught_subjects, allow_destroy: true
+    accepts_nested_attributes_for :taught_subjects, :availability_periods, allow_destroy: true
   end
 
   has_attached_file :avatar

@@ -7,7 +7,10 @@ class User < ActiveRecord::Base
     has_one :location
   end
 
-  accepts_nested_attributes_for :location, reject_if: :all_blank
+  with_options reject_if: :all_blank do
+    accepts_nested_attributes_for :location
+    accepts_nested_attributes_for :taught_subjects, allow_destroy: true
+  end
 
   has_attached_file :avatar
   validates_attachment_content_type :avatar,

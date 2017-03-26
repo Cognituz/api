@@ -52,7 +52,7 @@ class User::TaughtSubject < ApplicationRecord
 
   belongs_to :user, inverse_of: :taught_subjects
 
-  validates :name, :level, :user, presence: true
+  validates :name, :user, presence: true
   validates :level, inclusion: { in: LEVELS }
   validates :name, inclusion: { in: -> ts { SUBJECTS_BY_LEVEL.fetch(ts.level, []) } }
 end

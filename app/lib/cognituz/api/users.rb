@@ -9,26 +9,31 @@ class Cognituz::API::Users < Grape::API
     end
 
     route_param :id do
-      get { User.find params.fetch(:id) }
+      get do
+        user = User.find params.fetch(:id)
+        present user, with: Cognituz::API::Entities::User
+      end
 
       params do
         group :user, type: Hash do
-          with coerce: String do
-            optional :avatar
-            optional :first_name
-            optional :last_name
-            optional :school_year
-            optional :phone_number
-            optional :age
-            optional :description
-          end
+          optional :avatar, :first_name, :last_name, :school_year,
+            :phone_number, :age, :description, :short_desc, :long_desc, coerce: String
+
+          optional :teaches_online, :teaches_at_own_place,
+            :teaches_at_students_place, :teaches_at_public_place,
+            coerce: Boolean
 
           optional :location_attributes, type: Hash, default: {} do
-            optional :city
-            optional :district
-            optional :street
-            optional :street_number
-            optional :notes
+            optional :id, :city, :neighborhood,
+              :street, :street_number, :notes
+          end
+
+          optional :neighborhoods, type: Array
+
+          optional :taught_subjects_attributes, type: Array do
+            optional :id
+            optional :_destroy, coerce: Boolean
+            optional :name, :level, type: String
           end
         end
       end

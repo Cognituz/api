@@ -26,8 +26,8 @@ gem 'api-pagination', '~> 4.5.2'
 # Data layer stuff
 gem 'paperclip', '~> 5.0.0'
 gem 'email_validator'
-gem 'searchlight'
 gem 'ffaker'
+gem 'baby_squeel'
 
 # Debugging
 gem 'pry-rails'
@@ -39,6 +39,10 @@ gem 'devise'
 
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'rspec-rails', '~> 3.5.2'
+  gem 'factory_girl_rails', '~> 4.8.0'
+  gem 'faker', '~> 1.7.3'
+  gem 'database_cleaner'
 end
 
 group :development do

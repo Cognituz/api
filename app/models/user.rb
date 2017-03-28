@@ -1,6 +1,9 @@
 class User < ActiveRecord::Base
+  has_attached_file :avatar
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
 
   with_options inverse_of: :user do
     has_many :taught_subjects, class_name: :TaughtSubject
@@ -13,7 +16,7 @@ class User < ActiveRecord::Base
     accepts_nested_attributes_for :taught_subjects, :availability_periods, allow_destroy: true
   end
 
-  has_attached_file :avatar
+  validates :email, presence: true
   validates_attachment_content_type :avatar,
     content_type: %w[
       image/jpg

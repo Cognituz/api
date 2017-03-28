@@ -7,24 +7,23 @@ module User::Search
   filter :teaches_at_public_place
 
   filter :taught_subjects do |query, params|
-    next query unless params.key?(:taught_subjects)
+    taught_subjects = params[:taught_subjects]
+    next query unless taught_subjects.present? && taught_subjects.any?
 
-    binding.pry
+    query.joins(:taught_subjects).distinct.where.has do |u|
+      taught_subjects.inject(nil) do |memo, ts|
+        ts           = ts.with_indifferent_access
+        target_name  = ts.fetch(:name)
+        target_level = ts.fetch(:level)
 
-    taught_subjects = params.fetch(:taught_subjects)
+        fragment =
+          (
+            (u.taught_subjects.name == target_name) &
+            (u.taught_subjects.level == target_level)
+          )
 
-    taught_subjects.inject(query.joins(:taught_subjects)) do |q, ts|
-      ts_subquery =
-        User::TaughtSubject
-          .where(%Q`"#{User::TaughtSubject.table_name}"."user_id" = "users"."id"`)
-          .where(level: ts.fetch(:level), name: ts.fetch(:name))
-
-
-      q.where(
-        <<-SQL
-          EXISTS (#{}
-        SQL
-      )
+        memo ? memo | fragment : fragment
+      end
     end
   end
 end

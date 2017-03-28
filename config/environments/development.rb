@@ -54,7 +54,4 @@ Rails.application.configure do
   }
 
   Paperclip.options[:command_path] = "/usr/bin/"
-
-  config.action_controller.asset_host = ENV.fetch('HOST')
-  config.action_mailer.asset_host = ENV.fetch('HOST')
 end

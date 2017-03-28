@@ -38,5 +38,8 @@ module CogituzApi
     end
 
     config.middleware.use Rack::Deflater
+
+    config.action_controller.asset_host = ENV.fetch('HOST')
+    config.action_mailer.asset_host = ENV.fetch('HOST')
   end
 end

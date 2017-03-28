@@ -3,8 +3,23 @@ class Cognituz::API::Users < Grape::API
 
   resources :users do
     paginate per_page: 8
+
+    params do
+      group :filters, type: Hash do
+        optional :teaches_online,
+          :teaches_at_own_place,
+          :teaches_at_students_place,
+          :teaches_at_public_place, coerce: Boolean
+
+        optional :taught_subjects, type: Array do
+          requires :name, :level, type: String
+        end
+      end
+    end
+
     get do
-      users = User::Search.run(User, params[:filters] || {}).all
+      filters = declared(params).fetch(:filters)
+      users = User::Search.run(User, filters).all
       present paginate(users), with: Cognituz::API::Entities::User
     end
 

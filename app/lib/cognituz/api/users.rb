@@ -5,21 +5,27 @@ class Cognituz::API::Users < Grape::API
     paginate per_page: 8
 
     params do
-      group :filters, type: Hash do
-        optional :teaches_online,
+      optional :filters, type: Hash, default: {} do
+        optional \
+          :is_teacher,
+          :teaches_online,
           :teaches_at_own_place,
           :teaches_at_students_place,
-          :teaches_at_public_place, coerce: Boolean
+          :teaches_at_public_place,
+          coerce: Boolean
 
         optional :taught_subjects, type: Array do
           requires :name, :level, type: String
         end
+
+        optional :neighborhoods, type: Array
       end
     end
 
     get do
-      filters = declared(params).fetch(:filters)
-      users = User::Search.run(User, filters).all
+      filters = declared(params, include_missing: false).fetch(:filters)
+      base_query = User.includes(:taught_subjects, :availability_periods, :location)
+      users = User::Search.run(base_query, filters).all
       present paginate(users), with: Cognituz::API::Entities::User
     end
 

@@ -2,7 +2,7 @@ class Cognituz::API::Users < Grape::API
   version :v1, using: :path
 
   resources :users do
-    paginate per_page: 8
+    paginate per_page: 12
 
     params do
       optional :filters, type: Hash, default: {} do

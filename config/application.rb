@@ -33,7 +33,10 @@ module CogituzApi
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '*', headers: :any, methods: :any
+        resource '*',
+          headers: :any,
+          methods: :any,
+          expose:  %w(X-Total-Pages X-Per-Page X-Page)
       end
     end
 

@@ -3,7 +3,6 @@ class Cognituz::API::Users < Grape::API
 
   resources :users do
     paginate per_page: 12
-
     params do
       optional :filters, type: Hash, default: {} do
         optional \
@@ -23,9 +22,10 @@ class Cognituz::API::Users < Grape::API
     end
 
     get do
-      filters = declared(params, include_missing: false).fetch(:filters)
+      filters    = declared(params, include_missing: false).fetch(:filters)
       base_query = User.includes(:taught_subjects, :availability_periods, :location)
-      users = User::Search.run(base_query, filters).all
+      users      = User::Search.run(base_query, filters).all
+
       present paginate(users), with: Cognituz::API::Entities::User
     end
 

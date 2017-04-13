@@ -36,7 +36,11 @@ module CogituzApi
         resource '*',
           headers: :any,
           methods: :any,
-          expose:  %w(X-Total-Pages X-Per-Page X-Page)
+          expose: [
+            ApiPagination.config.page_header,
+            ApiPagination.config.per_page_header,
+            ApiPagination.config.total_header
+          ]
       end
     end
 

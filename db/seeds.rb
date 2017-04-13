@@ -25,7 +25,9 @@ def create_user(attributes)
     teaches_at_public_place:   random_boolean,
     teaches_at_students_place: random_boolean,
     password:                  'password',
-    avatar:                    DEFAULT_AVATAR
+    avatar:                    DEFAULT_AVATAR,
+    short_desc:                Faker::Lorem.sentence,
+    long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' ')
   }.merge(attributes))
 
   user.save!

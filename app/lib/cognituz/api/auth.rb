@@ -20,6 +20,11 @@ class Cognituz::API::Auth < Grape::API
       JSON.parse(resp.body).fetch('email')
     end
 
+    def set_student_defaults(user)
+      user.password = SecureRandom.hex(8)
+      user.roles = [params[:user_type] || :student]
+    end
+
     params :login_credentials do
       with type: String do
         requires :email
@@ -39,8 +44,8 @@ class Cognituz::API::Auth < Grape::API
         )
 
       user = User.find_or_initialize_by(email: email)
-      user.password = SecureRandom.hex(8)
-      user.roles = [params[:user_type] || :student]
+
+      set_student_defaults(user)
 
       if user.save
         { token: Cognituz::API::JWT.encode_user(user) }
@@ -55,6 +60,8 @@ class Cognituz::API::Auth < Grape::API
       user = User.find_by email: declared(params).fetch(:email)
       password = declared(params).fetch(:password)
 
+      set_student_defaults(user)
+
       if user && user.valid_password?(password)
         status :ok
         { token: Cognituz::API::JWT.encode_user(user) }
@@ -67,12 +74,14 @@ class Cognituz::API::Auth < Grape::API
     post '/signup' do
       user = User.new declared(params)
 
-      if user.save
+      set_student_defaults(user)
+
+      if user.save!
         status :created
-        Cognituz::API::JWT.encode_user(user)
+        { token: Cognituz::API::JWT.encode_user(user) }
       else
         status :unprocessable_entity
-        { error: user.errors.full_messages.to_sentence }
+        error!(user.errors.full_messages.to_sentence, 422)
       end
     end
   end

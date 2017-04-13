@@ -1,11 +1,10 @@
 class User < ActiveRecord::Base
-  has_attached_file :avatar
+  has_attached_file :avatar, styles: {original: '250x250#'}
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-
-  with_options inverse_of: :user do
+  with_options inverse_of: :user, dependent: :destroy do
     has_many :taught_subjects, class_name: :TaughtSubject
     has_many :availability_periods
     has_one :location

@@ -60,7 +60,8 @@ class Cognituz::API::Auth < Grape::API
       user = User.find_by email: declared(params).fetch(:email)
       password = declared(params).fetch(:password)
 
-      set_student_defaults(user)
+      user.roles << :student
+      user.update_column :roles, user.roles
 
       if user && user.valid_password?(password)
         status :ok

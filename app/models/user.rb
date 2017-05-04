@@ -1,8 +1,13 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_attached_file :avatar, styles: {original: '250x250#'}
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  with_options class_name: :ClassAppointment do
+    has_many :appointments_as_teacher, foreign_key: :teacher_id
+    has_many :appointments_as_student, foreign_key: :student_id
+  end
 
   with_options inverse_of: :user, dependent: :destroy do
     has_many :taught_subjects, class_name: :TaughtSubject
@@ -12,17 +17,16 @@ class User < ActiveRecord::Base
 
   with_options reject_if: :all_blank do
     accepts_nested_attributes_for :location
-    accepts_nested_attributes_for :taught_subjects, :availability_periods, allow_destroy: true
+    accepts_nested_attributes_for(
+      :taught_subjects,
+      :availability_periods,
+      allow_destroy: true
+    )
   end
 
   validates :email, presence: true
   validates_attachment_content_type :avatar,
-    content_type: %w[
-      image/jpg
-      image/jpeg
-      image/png
-      image/gif
-    ]
+    content_type: %w[image/jpg image/jpeg image/png image/gif]
 
   def name=(str)
     match = str.match(/(?<first_name>.+)\s(?<last_name>\w+)+$/)

@@ -61,8 +61,7 @@ ActiveRecord::Base.transaction do
       teaches_at_own_place:      random_boolean,
       teaches_at_public_place:   random_boolean,
       teaches_at_students_place: random_boolean,
-      password:                  'password',
-
+      password:                  'password'
     )
   end
 end

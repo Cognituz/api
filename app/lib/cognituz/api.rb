@@ -33,4 +33,5 @@ class Cognituz::API < Grape::API
   mount self::ContactForms
   mount self::SubjectGroups
   mount self::Neighborhoods
+  mount self::ClassAppointments
 end

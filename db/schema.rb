@@ -10,10 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170326175306) do
+ActiveRecord::Schema.define(version: 20170414230225) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "class_appointment_attachments", force: :cascade do |t|
+    t.integer  "appointment_id"
+    t.string   "content_file_name",    null: false
+    t.string   "content_content_type", null: false
+    t.integer  "content_file_size",    null: false
+    t.datetime "content_updated_at",   null: false
+    t.index ["appointment_id"], name: "index_class_appointment_attachments_on_appointment_id", using: :btree
+  end
+
+  create_table "class_appointments", force: :cascade do |t|
+    t.integer  "teacher_id", null: false
+    t.integer  "student_id", null: false
+    t.datetime "starts_at",  null: false
+    t.datetime "ends_at",    null: false
+    t.integer  "kind",       null: false
+    t.string   "place_desc"
+    t.text     "desc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ends_at"], name: "index_class_appointments_on_ends_at", using: :btree
+    t.index ["starts_at"], name: "index_class_appointments_on_starts_at", using: :btree
+    t.index ["student_id"], name: "index_class_appointments_on_student_id", using: :btree
+    t.index ["teacher_id"], name: "index_class_appointments_on_teacher_id", using: :btree
+  end
 
   create_table "locations", force: :cascade do |t|
     t.string   "street",        null: false
@@ -66,8 +91,6 @@ ActiveRecord::Schema.define(version: 20170326175306) do
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
     t.text     "roles",                     default: [],              array: true
-    t.string   "avatar_tmp"
-    t.string   "avatar_processing"
     t.string   "school_year"
     t.string   "phone_number"
     t.integer  "age"
@@ -88,5 +111,8 @@ ActiveRecord::Schema.define(version: 20170326175306) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "class_appointment_attachments", "class_appointments", column: "appointment_id"
+  add_foreign_key "class_appointments", "users", column: "student_id"
+  add_foreign_key "class_appointments", "users", column: "teacher_id"
   add_foreign_key "locations", "users"
 end

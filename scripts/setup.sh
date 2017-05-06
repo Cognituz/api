@@ -4,5 +4,5 @@ bundle exec rake \
   db:create \
   db:migrate \
   db:seed \
-  assets:clean u\
+  assets:clean \
   assets:precompile

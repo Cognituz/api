@@ -18,3 +18,6 @@
 
 # Uploads
 public/system
+
+# Precompiled assets
+public/assets

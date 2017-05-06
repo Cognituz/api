@@ -6,17 +6,16 @@ default: &default
   password:  <%= ENV.fetch("DATABASE_PASSWORD") { 'postgres' } %>
   host:      <%= ENV.fetch("DATABASE_HOST")     { 'localhost' } %>
   port:      <%= ENV.fetch("DATABASE_PORT")     { 5432 } %>
+  database:  <%= ENV.fetch("DATABASE_NAME")     { 'cognituz_api_development' } %>
 
 development:
   <<: *default
-  database: cogituz_api_development
 
 test:
   <<: *default
-  database: cogituz_api_test
+
+staging:
+  <<: *default
 
 production:
   <<: *default
-  database: cogituz_api_production
-  username: cogituz_api
-  password: <%= ENV['COGITUZ_API_DATABASE_PASSWORD'] %>

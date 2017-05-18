@@ -27,7 +27,13 @@ def create_user(attributes)
     password:                  'password',
     avatar:                    DEFAULT_AVATAR,
     short_desc:                Faker::Lorem.sentence,
-    long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' ')
+    long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' '),
+    availability_periods_attributes: (0..1).map do |day|
+      {
+        starts_at_sfsow: (day * 24 * 60 * 60) + (8 * 60 * 60),
+        ends_at_sfsow: (day * 24 * 60 * 60) + (20 * 60 * 60)
+      }
+    end
   }.merge(attributes))
 
   user.save!

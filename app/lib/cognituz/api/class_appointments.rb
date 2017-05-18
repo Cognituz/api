@@ -4,8 +4,8 @@ class Cognituz::API::ClassAppointments < Grape::API
   resources :class_appointments do
     params do
       group :class_appointment, type: Hash, default: {} do
-        requires :teacher_id, :student_id, coerce: Integer
-        requires :starts_at, :ends_at, coerce: DateTime
+        requires :teacher_id, :student_id, :duration, coerce: Integer
+        requires :starts_at, coerce: DateTime
         requires :kind, coerce: String
 
         given kind: -> (k) { k == 'at_public_place' } do

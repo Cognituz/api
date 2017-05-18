@@ -1,5 +1,6 @@
 class ClassAppointment < ApplicationRecord
-  enum kinds: %w[at_teachers_place at_students_place at_public_place]
+  attr_reader :duration
+  enum kinds: %w[at_teachers_place at_students_place at_public_place online]
 
   with_options class_name: :User do
     belongs_to :teacher, inverse_of: :appointments_as_teacher
@@ -42,7 +43,22 @@ class ClassAppointment < ApplicationRecord
     .where.not id: a.id
   end
 
+  def duration=(int)
+    @duration = int
+    set_ends_at
+  end
+
+  def starts_at=(date)
+    super(date)
+    set_ends_at
+  end
+
   private
+
+  def set_ends_at
+    return unless self.duration && self.starts_at
+    self.ends_at = starts_at + duration.hours
+  end
 
   def teacher_is_available
     return if (

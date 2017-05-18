@@ -60,10 +60,10 @@ class Cognituz::API::Auth < Grape::API
       user = User.find_by email: declared(params).fetch(:email)
       password = declared(params).fetch(:password)
 
-      user.roles << :student
-      user.update_column :roles, user.roles
-
       if user && user.valid_password?(password)
+        user.roles << :student
+        user.save!
+
         status :ok
         { token: Cognituz::API::JWT.encode_user(user) }
       else

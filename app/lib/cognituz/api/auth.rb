@@ -6,8 +6,8 @@ class Cognituz::API::Auth < Grape::API
   helpers do
     def get_email(code:, redirect_uri:)
       client = OAuth2::Client.new(
-        ENV.fetch('FACEBOOK_ID'),
-        ENV.fetch('FACEBOOK_SECRET'),
+        Rails.application.config.facebook_id,
+        Rails.application.config.facebook_secret,
         site:      'https://graph.facebook.com/v2.8',
         token_url: '/oauth/access_token'
       )
@@ -20,18 +20,22 @@ class Cognituz::API::Auth < Grape::API
       JSON.parse(resp.body).fetch('email')
     end
 
-    def set_student_defaults(user)
+    def set_user_defaults(user)
       user.password = SecureRandom.hex(8)
-      user.roles = [params[:user_type] || :student]
+      user_type = declared(params)[:user_type]
+      user.roles = user.roles.push(user_type).uniq if user_type.present?
+    end
+
+    def set_user_defaults!(user)
+      set_user_defaults(user)
+      user.save!
     end
 
     params :login_credentials do
       with type: String do
-        requires :email
-        requires :password
+        requires :email, :password
+        optional :user_type
       end
-
-      optional :roles, type: Array[String]
     end
   end
 
@@ -61,8 +65,7 @@ class Cognituz::API::Auth < Grape::API
       password = declared(params).fetch(:password)
 
       if user && user.valid_password?(password)
-        user.roles << :student
-        user.save!
+        set_user_defaults!(user)
 
         status :ok
         { token: Cognituz::API::JWT.encode_user(user) }
@@ -74,16 +77,9 @@ class Cognituz::API::Auth < Grape::API
     params { use :login_credentials }
     post '/signup' do
       user = User.new declared(params)
-
-      set_student_defaults(user)
-
-      if user.save!
-        status :created
-        { token: Cognituz::API::JWT.encode_user(user) }
-      else
-        status :unprocessable_entity
-        error!(user.errors.full_messages.to_sentence, 422)
-      end
+      set_user_defaults(user)
+      status :created
+      { token: Cognituz::API::JWT.encode_user(user) }
     end
   end
 end

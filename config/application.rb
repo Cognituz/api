@@ -18,13 +18,22 @@ Bundler.require(*Rails.groups)
 
 module CogituzApi
   class Application < Rails::Application
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
+    # Custom config for this app
+    config.host                = ENV.fetch("HOST")
+    config.mercado_pago_id     = ENV.fetch("MERCADO_PAGO_ID")
+    config.mercado_pago_secret = ENV.fetch("MERCADO_PAGO_SECRET")
+    config.database_username   = ENV["DATABASE_USERNAME"] || 'postgres'
+    config.database_password   = ENV["DATABASE_PASSWORD"] || 'postgres'
+    config.database_host       = ENV["DATABASE_HOST"] || 'localhost'
+    config.database_port       = ENV["DATABASE_PORT"] || 5432
+    config.database_name       = ENV["DATABASE_NAME"] || 'cognituz_api_development'
+    config.mailgun_key         = ENV["MAILGUN_KEY"] || 'key-47138ef6c5f3fc76f9ace61382ff283a'
+    config.mailgun_domain      = ENV["MAILGUN_DOMAIN"] || 'sandbox5a2faf4d9a564760bb2f03073ef1e2c2.mailgun.org'
 
-    # Only loads a smaller set of middleware suitable for API only apps.
-    # Middleware like session, flash, cookies can be added back manually.
-    # Skip views, helpers and assets when generating a new resource.
+    config.action_controller.asset_host = config.host
+    config.action_mailer.asset_host     = config.host
+    config.action_mailer.default_url_options = {host: ENV.fetch('HOST')}
+
     config.api_only = true
 
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
@@ -45,8 +54,5 @@ module CogituzApi
     end
 
     config.middleware.use Rack::Deflater
-
-    config.action_controller.asset_host = ENV.fetch('HOST')
-    config.action_mailer.asset_host = ENV.fetch('HOST')
   end
 end

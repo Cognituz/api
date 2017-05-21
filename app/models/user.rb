@@ -13,6 +13,7 @@ class User < ApplicationRecord
     has_many :taught_subjects, class_name: :TaughtSubject
     has_many :availability_periods
     has_one :location
+    has_one :mercado_pago_credential
   end
 
   with_options reject_if: :all_blank do

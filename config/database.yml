@@ -1,12 +1,11 @@
 default: &default
   adapter: postgresql
   encoding: utf-8
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username:  <%= ENV.fetch("DATABASE_USERNAME") { 'postgres' } %>
-  password:  <%= ENV.fetch("DATABASE_PASSWORD") { 'postgres' } %>
-  host:      <%= ENV.fetch("DATABASE_HOST")     { 'localhost' } %>
-  port:      <%= ENV.fetch("DATABASE_PORT")     { 5432 } %>
-  database:  <%= ENV.fetch("DATABASE_NAME")     { 'cognituz_api_development' } %>
+  username:  <%= Rails.application.config.database_username %>
+  password:  <%= Rails.application.config.database_password %>
+  host:      <%= Rails.application.config.database_host %>
+  port:      <%= Rails.application.config.database_port %>
+  database:  <%= Rails.application.config.database_name %>
 
 development:
   <<: *default

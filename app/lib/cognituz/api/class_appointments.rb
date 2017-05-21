@@ -1,5 +1,6 @@
 class Cognituz::API::ClassAppointments < Grape::API
   version :v1, using: :path
+  before { ensure_authenticated! }
 
   resources :class_appointments do
     params do

@@ -14,11 +14,13 @@ gem "dotenv-rails"
 gem 'slim'
 gem 'sidekiq'
 gem 'mailgun_rails'
+gem 'blanket_wrapper'
 
 # API
 gem 'grape', '~> 0.19.1'
 gem 'grape-entity', '~> 0.6.1'
 gem 'grape_on_rails_routes'
+gem 'grape-route-helpers'
 gem 'hashie-forbidden_attributes'
 gem 'kaminari', '~> 0.17.0'
 gem 'api-pagination', '~> 4.5.2'
@@ -28,6 +30,9 @@ gem 'paperclip', '~> 5.0.0'
 gem 'email_validator'
 gem 'ffaker'
 gem 'baby_squeel'
+gem 'state_machines'
+gem 'state_machines-activerecord'
+gem 'validates_timeliness', '~> 4.0'
 
 # Debugging
 gem 'pry-rails'
@@ -36,6 +41,9 @@ gem 'pry-rails'
 gem 'oauth2'
 gem 'jwt'
 gem 'devise'
+
+# Payment
+gem "mercadopago-sdk"
 
 group :development, :test do
   gem 'byebug', platform: :mri

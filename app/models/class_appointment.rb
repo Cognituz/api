@@ -2,6 +2,27 @@ class ClassAppointment < ApplicationRecord
   attr_reader :duration
   enum kinds: %w[at_teachers_place at_students_place at_public_place online]
 
+  state_machine :status, initial: :unconfirmed do
+    state :confirmed do
+      validates :mercadopago_payment_id, presence: true
+      validates_time :starts_at, on_or_after: -> { Time.now }
+    end
+
+    state :live do
+      validates_time :starts_at, on_or_before: -> { Time.now }
+      validates_time :ends_at, on_or_after: -> { Time.now }
+    end
+
+    state :expired do
+      validates_time :ends_at, on_or_before: -> { Time.now }
+    end
+
+    event(:confirm)     { transition all => :confirmed }
+    event(:set_expired) { transition all => :due }
+    event(:set_live)    { transition all => :set_live }
+    event(:cancel)      { transition all => :cancelled }
+  end
+
   with_options class_name: :User do
     belongs_to :teacher, inverse_of: :appointments_as_teacher
     belongs_to :student, inverse_of: :appointments_as_student
@@ -16,6 +37,8 @@ class ClassAppointment < ApplicationRecord
 
   validates :teacher, :student, :starts_at, :ends_at, :kind, presence: true
   validates :place_desc, presence: true, if: :at_public_place?
+  validates_time :starts_at, on_or_after: -> { Time.now }
+  validates_time :ends_at, on_or_after: :starts_at
 
   validate :teacher_is_available
 

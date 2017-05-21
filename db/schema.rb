@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170414230225) do
+ActiveRecord::Schema.define(version: 20170521215418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20170414230225) do
     t.text     "desc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "status",     null: false
     t.index ["ends_at"], name: "index_class_appointments_on_ends_at", using: :btree
     t.index ["starts_at"], name: "index_class_appointments_on_starts_at", using: :btree
     t.index ["student_id"], name: "index_class_appointments_on_student_id", using: :btree
@@ -50,6 +51,16 @@ ActiveRecord::Schema.define(version: 20170414230225) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.index ["user_id"], name: "index_locations_on_user_id", using: :btree
+  end
+
+  create_table "mercado_pago_credentials", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "access_token"
+    t.string   "public_key"
+    t.string   "refresh_token"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["user_id"], name: "index_mercado_pago_credentials_on_user_id", using: :btree
   end
 
   create_table "user_availability_periods", force: :cascade do |t|
@@ -106,6 +117,7 @@ ActiveRecord::Schema.define(version: 20170414230225) do
     t.text     "neighborhoods",             default: [],              array: true
     t.string   "short_desc"
     t.text     "long_desc"
+    t.integer  "mercado_pago_user_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
@@ -115,4 +127,5 @@ ActiveRecord::Schema.define(version: 20170414230225) do
   add_foreign_key "class_appointments", "users", column: "student_id"
   add_foreign_key "class_appointments", "users", column: "teacher_id"
   add_foreign_key "locations", "users"
+  add_foreign_key "mercado_pago_credentials", "users"
 end

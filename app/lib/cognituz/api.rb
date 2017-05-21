@@ -13,6 +13,11 @@ class Cognituz::API < Grape::API
       Cognituz::API::JWT.decode_user(token) if token.present?
     end
 
+    def ensure_authenticated!
+      return if current_user.present?
+      error! "You must be authenticated to perform this action", 401
+    end
+
     def handle_resource_action(resource, &block)
       result = yield(resource)
 
@@ -34,4 +39,5 @@ class Cognituz::API < Grape::API
   mount self::SubjectGroups
   mount self::Neighborhoods
   mount self::ClassAppointments
+  mount self::MercadoPago
 end

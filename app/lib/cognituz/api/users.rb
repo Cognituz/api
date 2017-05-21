@@ -1,6 +1,8 @@
 class Cognituz::API::Users < Grape::API
   version :v1, using: :path
 
+  before { ensure_authenticated! }
+
   resources :users do
     paginate per_page: 12
     params do

@@ -21,7 +21,7 @@ class Cognituz::API::Auth < Grape::API
     end
 
     def set_user_defaults(user)
-      user.password = SecureRandom.hex(8)
+      user.password = SecureRandom.hex(8) unless user.encrypted_password.present?
       user_type = declared(params)[:user_type]
       user.roles = user.roles.push(user_type).uniq if user_type.present?
     end

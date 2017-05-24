@@ -4,6 +4,5 @@ class Cognituz::API::MercadoPago < Grape::API
 
   namespace :mercado_pago do
     mount self::Auth
-    mount self::PaymentPreferences
   end
 end

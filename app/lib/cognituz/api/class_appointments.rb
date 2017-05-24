@@ -23,6 +23,7 @@ class Cognituz::API::ClassAppointments < Grape::API
       attributes = declared(params).fetch(:class_appointment)
       appointment = ClassAppointment.new(attributes)
       appointment.save!
+      appointment.generate_payment_preference!
       present appointment, with: Cognituz::API::Entities::ClassAppointment
     end
   end

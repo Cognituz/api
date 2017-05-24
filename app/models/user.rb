@@ -4,20 +4,22 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  with_options class_name: :ClassAppointment do
-    has_many :appointments_as_teacher, foreign_key: :teacher_id
-    has_many :appointments_as_student, foreign_key: :student_id
-  end
+  with_options dependent: :destroy do
+    with_options class_name: :ClassAppointment do
+      has_many :appointments_as_teacher, foreign_key: :teacher_id
+      has_many :appointments_as_student, foreign_key: :student_id
+    end
 
-  with_options inverse_of: :user, dependent: :destroy do
-    has_many :taught_subjects, class_name: :TaughtSubject
-    has_many :availability_periods
-    has_one :location
-    has_one :mercado_pago_credential
+    with_options inverse_of: :user do
+      has_many :taught_subjects, class_name: :TaughtSubject
+      has_many :availability_periods
+      has_one :location
+      has_one :mercado_pago_credential, autosave: true
+    end
   end
 
   with_options reject_if: :all_blank do
-    accepts_nested_attributes_for :location
+    accepts_nested_attributes_for :location, :mercado_pago_credential
     accepts_nested_attributes_for(
       :taught_subjects,
       :availability_periods,
@@ -43,4 +45,6 @@ class User < ApplicationRecord
       old_avatar_setter.bind(self).(arg)
     end
   end
+
+  def name() [first_name, last_name].join(' ') end
 end

@@ -3,14 +3,16 @@ class Cognituz::API < Grape::API
 
   helpers do
     def current_user
-      authorization_header = request.headers['Authorization']
+      return unless auth_token.present?
+      Cognituz::API::JWT.decode_user(auth_token)
+    end
 
-      token =
-        authorization_header
-          .try(:match, /\ABearer (.+)\z/)
-          .try(:[], 1)
-
-      Cognituz::API::JWT.decode_user(token) if token.present?
+    def auth_token
+      params[:token] ||
+      request
+        .headers['Authorization']
+        .try(:match, /\ABearer (.+)\z/)
+        .try(:[], 1)
     end
 
     def ensure_authenticated!

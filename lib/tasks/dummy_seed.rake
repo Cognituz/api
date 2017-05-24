@@ -33,7 +33,8 @@ module DummySeeder
           teaches_at_own_place:      random_boolean,
           teaches_at_public_place:   random_boolean,
           teaches_at_students_place: random_boolean,
-          password:                  'password'
+          password:                  'password',
+          hourly_price:              rand(12..250) * 10
         )
       end
     end
@@ -60,9 +61,12 @@ module DummySeeder
       short_desc:                Faker::Lorem.sentence,
       long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' '),
       availability_periods_attributes: (0..6).map do |day|
+        offset = 3 * 60 * 60
+
         {
-          starts_at_sfsow: (day * 24 * 60 * 60) + (8 * 60 * 60),
-          ends_at_sfsow: (day * 24 * 60 * 60) + (20 * 60 * 60)
+          week_day:        day,
+          starts_at_sfsow: (day * 24 * 60 * 60) + (8 * 60 * 60) - offset,
+          ends_at_sfsow:   (day * 24 * 60 * 60) + (20 * 60 * 60) - offset
         }
       end
     }.merge(attributes))

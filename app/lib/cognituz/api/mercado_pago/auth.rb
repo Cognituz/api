@@ -30,7 +30,8 @@ class Cognituz::API::MercadoPago::Auth < Grape::API
       File.join(
         Rails.application.config.host,
         v1_mercado_pago_auth_callback_path(params: {
-          on_success_redirect_to: on_success_redirect_to
+          on_success_redirect_to: on_success_redirect_to,
+          token:                  auth_token
         })
       )
     end
@@ -41,7 +42,12 @@ class Cognituz::API::MercadoPago::Auth < Grape::API
       requires :on_success_redirect_to, type: String,
         desc: "Where to redirect after successfully linking the MP account"
     end
-    get(:redirect) { redirect mercado_pago_auth_url }
+    get(:link) { redirect mercado_pago_auth_url }
+
+    delete(:unlink) do
+      current_user.mercado_pago_credential.destroy!
+      status 200
+    end
 
     params do
       requires :code, :on_success_redirect_to, type: String
@@ -63,16 +69,14 @@ class Cognituz::API::MercadoPago::Auth < Grape::API
           redirect_uri:  callback_url
         }
       ).tap do |resp|
-        (current_user.mercado_pago_credential ||
-        current_user.build_mercado_pago_credential)
-          .assign_attributes(
+        current_user.update!(
+          mercado_pago_credential_attributes: {
             access_token:  resp.access_token,
             refresh_token: resp.payload.refresh_token.presence || resp.try(:refresh_token),
             public_key:    resp.public_key,
-          )
-
-        current_user.mercado_pago_user_id = resp.user_id
-        current_user.save!
+          },
+          mercado_pago_user_id: resp.user_id
+        )
       end
 
       redirect declared(params).fetch(:on_success_redirect_to)

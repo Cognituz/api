@@ -22,6 +22,8 @@ module CogituzApi
     config.host                = ENV.fetch("HOST")
     config.mercado_pago_id     = ENV.fetch("MERCADO_PAGO_ID")
     config.mercado_pago_secret = ENV.fetch("MERCADO_PAGO_SECRET")
+    config.facebook_id         = ENV.fetch("FACEBOOK_ID")
+    config.facebook_secret     = ENV.fetch("FACEBOOK_SECRET")
     config.database_username   = ENV["DATABASE_USERNAME"] || 'postgres'
     config.database_password   = ENV["DATABASE_PASSWORD"] || 'postgres'
     config.database_host       = ENV["DATABASE_HOST"] || 'localhost'

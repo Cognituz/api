@@ -1,5 +1,5 @@
 class ClassAppointment < ApplicationRecord
-  attr_reader :duration
+  attr_accessor :payment_preference
   enum kinds: %w[at_teachers_place at_students_place at_public_place online]
 
   state_machine :status, initial: :unconfirmed do
@@ -17,9 +17,11 @@ class ClassAppointment < ApplicationRecord
       validates_time :ends_at, on_or_before: -> { Time.now }
     end
 
+    state :cancelled
+
     event(:confirm)     { transition all => :confirmed }
-    event(:set_expired) { transition all => :due }
-    event(:set_live)    { transition all => :set_live }
+    event(:set_expired) { transition all => :expired }
+    event(:set_live)    { transition all => :live }
     event(:cancel)      { transition all => :cancelled }
   end
 
@@ -40,7 +42,9 @@ class ClassAppointment < ApplicationRecord
   validates_time :starts_at, on_or_after: -> { Time.now }
   validates_time :ends_at, on_or_after: :starts_at
 
-  validate :teacher_is_available
+  validate :teacher_is_available,          if: :unconfirmed?
+  validate :teacher_has_linked_mp_account, if: :unconfirmed?
+  validate :teacher_has_hourly_price,      if: :unconfirmed?
 
   scope :overlapping, -> (start_time:, end_time:, negate: false) do
     query = <<-SQL.strip_heredoc
@@ -66,18 +70,43 @@ class ClassAppointment < ApplicationRecord
     .where.not id: a.id
   end
 
+  # Represents duration in hours
+  def duration
+    @duration ||=
+      self.starts_at && self.ends_at &&
+      ((self.ends_at - self.starts_at) / 60.0 / 60.0)
+  end
+
+  # Sets duration. Triggers setting of ends_at
   def duration=(int)
     @duration = int
     set_ends_at
   end
 
+  # Sets starts_at. Triggers setting of ends_at
   def starts_at=(date)
     super(date)
     set_ends_at
   end
 
+  def generate_payment_preference!
+    item = {
+      title:      "Cognituz: Clase en vivo con profesor #{teacher.name}",
+      quantity:   1,
+      unit_price: (duration * teacher.hourly_price).to_f
+    }
+
+    self.payment_preference =
+      Cognituz::MercadoPago::PaymentPreference.new(
+        access_token: teacher.mercado_pago_credential.access_token,
+        external_ref: "cognituz_class_appointment_#{self.id}",
+        items:        [item]
+      ).create!
+  end
+
   private
 
+  # Combines duration and starts_at to set ends_at
   def set_ends_at
     return unless self.duration && self.starts_at
     self.ends_at = starts_at + duration.hours
@@ -89,5 +118,15 @@ class ClassAppointment < ApplicationRecord
       teacher.availability_periods.containing(starts_at..ends_at).any?
     )
     errors.add :base, :teacher_not_available
+  end
+
+  def teacher_has_linked_mp_account
+    return if teacher.mercado_pago_credential.try(:access_token)
+    errors.add :base, :teacher_has_not_linked_mercado_pago_account
+  end
+
+  def teacher_has_hourly_price
+    return if teacher.hourly_price.present?
+    errors.add :base, :teacher_does_not_have_hourly_price
   end
 end

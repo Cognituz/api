@@ -1,7 +1,8 @@
 class Cognituz::API::Users < Grape::API
   version :v1, using: :path
-
   before { ensure_authenticated! }
+
+  ENTITY = Cognituz::API::Entities::User
 
   resources :users do
     paginate per_page: 12
@@ -25,16 +26,21 @@ class Cognituz::API::Users < Grape::API
 
     get do
       filters    = declared(params, include_missing: false).fetch(:filters)
-      base_query = User.includes(:taught_subjects, :availability_periods, :location)
+      base_query = User.includes(
+        :taught_subjects,
+        :availability_periods,
+        :location,
+        :mercado_pago_credential
+      )
       users      = User::Search.run(base_query, filters).all
 
-      present paginate(users), with: Cognituz::API::Entities::User
+      present paginate(users), with: ENTITY
     end
 
     route_param :id do
       get do
         user = User.find params.fetch(:id)
-        present user, with: Cognituz::API::Entities::User
+        present user, with: ENTITY
       end
 
       params do
@@ -70,7 +76,7 @@ class Cognituz::API::Users < Grape::API
         User.find(params.fetch(:id)).tap do |u|
           attributes = declared(params).fetch(:user)
           u.update! attributes
-          present u, with: Cognituz::API::Entities::User
+          present u, with: ENTITY
         end
       end
     end

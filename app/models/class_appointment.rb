@@ -1,6 +1,6 @@
 class ClassAppointment < ApplicationRecord
   attr_accessor :payment_preference
-  enum kinds: %w[at_teachers_place at_students_place at_public_place online]
+  enum kind: %w[at_teachers_place at_students_place at_public_place online]
 
   state_machine :status, initial: :unconfirmed do
     state :confirmed do
@@ -19,10 +19,10 @@ class ClassAppointment < ApplicationRecord
 
     state :cancelled
 
-    event(:confirm)     { transition all => :confirmed }
-    event(:set_expired) { transition all => :expired }
-    event(:set_live)    { transition all => :live }
-    event(:cancel)      { transition all => :cancelled }
+    event(:confirm)     { transition :unconfirmed => :confirmed }
+    event(:set_live)    { transition :confirmed => :live }
+    event(:set_expired) { transition all - %i[expired cancelled] => :expired }
+    event(:cancel)      { transition all - %i[cancelled] => :cancelled }
   end
 
   with_options class_name: :User do

@@ -20,7 +20,7 @@ module Cognituz::Search
       case name_or_hash
       when Symbol
         if arel_operator?(operator)
-          def_arel_filter(
+          build_arel_filter(
             name_or_hash,
             required_params: required_params,
             operator:        operator
@@ -47,7 +47,7 @@ module Cognituz::Search
     AREL_OPERATORS.include?(op)
   end
 
-  def def_arel_filter(
+  def build_arel_filter(
     name,
     required_params: [name],
     operator:        :eq

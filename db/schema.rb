@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170523033537) do
+ActiveRecord::Schema.define(version: 20170527204309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,24 @@ ActiveRecord::Schema.define(version: 20170523033537) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.index ["user_id"], name: "index_mercado_pago_credentials_on_user_id", using: :btree
+  end
+
+  create_table "study_subject_links", force: :cascade do |t|
+    t.integer  "study_subject_id"
+    t.integer  "user_id"
+    t.integer  "class_appointment_id"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["class_appointment_id"], name: "index_study_subject_links_on_class_appointment_id", using: :btree
+    t.index ["study_subject_id"], name: "index_study_subject_links_on_study_subject_id", using: :btree
+    t.index ["user_id"], name: "index_study_subject_links_on_user_id", using: :btree
+  end
+
+  create_table "study_subjects", force: :cascade do |t|
+    t.string   "level"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_availability_periods", force: :cascade do |t|
@@ -129,4 +147,7 @@ ActiveRecord::Schema.define(version: 20170523033537) do
   add_foreign_key "class_appointments", "users", column: "teacher_id"
   add_foreign_key "locations", "users"
   add_foreign_key "mercado_pago_credentials", "users"
+  add_foreign_key "study_subject_links", "class_appointments"
+  add_foreign_key "study_subject_links", "study_subjects"
+  add_foreign_key "study_subject_links", "users"
 end

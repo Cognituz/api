@@ -23,20 +23,7 @@ module DummySeeder
         roles: ['teacher', 'student']
       )
 
-      20.times do
-        create_user(
-          first_name:                first_name = FFaker::Name.first_name,
-          last_name:                 last_name = FFaker::Name.last_name,
-          email:                     FFaker::Internet.email([first_name, last_name].join(' ')),
-          roles:                     ['teacher'],
-          teaches_online:            random_boolean,
-          teaches_at_own_place:      random_boolean,
-          teaches_at_public_place:   random_boolean,
-          teaches_at_students_place: random_boolean,
-          password:                  'password',
-          hourly_price:              rand(12..250) * 10
-        )
-      end
+      20.times { create_user }
     end
   end
 
@@ -46,7 +33,7 @@ module DummySeeder
     [true, false].sample
   end
 
-  def self.create_user(attributes)
+  def self.create_user(attributes = {})
     user = User.new({
       first_name:                first_name = FFaker::Name.first_name,
       last_name:                 last_name = FFaker::Name.last_name,
@@ -60,6 +47,8 @@ module DummySeeder
       avatar:                    DEFAULT_AVATAR,
       short_desc:                Faker::Lorem.sentence,
       long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' '),
+      hourly_price:              rand(12..250) * 10,
+      taught_subject_ids:        StudySubject.reorder('RANDOM()').first(rand(1..5)).pluck(:id),
       availability_periods_attributes: (0..6).map do |day|
         offset = 3 * 60 * 60
 
@@ -68,7 +57,7 @@ module DummySeeder
           starts_at_sfsow: (day * 24 * 60 * 60) + (8 * 60 * 60) - offset,
           ends_at_sfsow:   (day * 24 * 60 * 60) + (20 * 60 * 60) - offset
         }
-      end
+      end,
     }.merge(attributes))
 
     user.save!

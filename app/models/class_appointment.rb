@@ -2,27 +2,44 @@ class ClassAppointment < ApplicationRecord
   attr_accessor :payment_preference
   enum kind: %w[at_teachers_place at_students_place at_public_place online]
 
+  after_commit :schedulle_status_fixing
+
+  after_commit :notify_creation, on: :create
+  after_commit :notify_confirmation
+  after_commit :notify_cancelation
+
+
   state_machine :status, initial: :unconfirmed do
+    state :unconfirmed, :confirmed, :live do
+      validate :teacher_is_available
+      validate :teacher_has_linked_mp_account
+      validate :teacher_has_hourly_price
+    end
+
+    state :unconfirmed do
+      validates_datetime :starts_at, on_or_after: -> { Time.now }
+    end
+
     state :confirmed do
-      validates :mercadopago_payment_id, presence: true
-      validates_time :starts_at, on_or_after: -> { Time.now }
+      #validates :mercadopago_payment_id, presence: true
+      validates_datetime :starts_at, on_or_after: -> { Time.now }, on: :create
     end
 
     state :live do
-      validates_time :starts_at, on_or_before: -> { Time.now }
-      validates_time :ends_at, on_or_after: -> { Time.now }
+      validates_datetime :starts_at, on_or_before: -> { Time.now }
+      validates_datetime :ends_at, on_or_after: -> { Time.now }
     end
 
     state :expired do
-      validates_time :ends_at, on_or_before: -> { Time.now }
+      validates_datetime :ends_at, on_or_before: -> { Time.now }
     end
 
-    state :cancelled
+    state :canceled
 
-    event(:confirm)     { transition :unconfirmed => :confirmed }
-    event(:set_live)    { transition :confirmed => :live }
-    event(:set_expired) { transition all - %i[expired cancelled] => :expired }
-    event(:cancel)      { transition all - %i[cancelled] => :cancelled }
+    event(:confirm)  { transition unconfirmed: :confirmed }
+    event(:set_live) { transition confirmed: :live }
+    event(:expire)   { transition all - %i[ex pired canceled] => :expired }
+    event(:cancel)   { transition all - %i[canceled] => :canceled }
   end
 
   with_options class_name: :User do
@@ -30,21 +47,21 @@ class ClassAppointment < ApplicationRecord
     belongs_to :student, inverse_of: :appointments_as_student
   end
 
-  has_many :attachments,
-    foreign_key: :appointment_id,
-    dependent: :destroy,
-    inverse_of: :appointment
+  with_options dependent: :destroy do
+    has_many :attachments,
+      foreign_key: :appointment_id,
+      inverse_of: :appointment
+
+    has_many :study_subject_links, class_name: :"StudySubject::Link"
+  end
+
+  has_many :study_subjects, through: :study_subject_links
 
   accepts_nested_attributes_for :attachments
 
   validates :teacher, :student, :starts_at, :ends_at, :kind, presence: true
   validates :place_desc, presence: true, if: :at_public_place?
-  validates_time :starts_at, on_or_after: -> { Time.now }
-  validates_time :ends_at, on_or_after: :starts_at
-
-  validate :teacher_is_available,          if: :unconfirmed?
-  validate :teacher_has_linked_mp_account, if: :unconfirmed?
-  validate :teacher_has_hourly_price,      if: :unconfirmed?
+  validates_datetime :ends_at, on_or_after: :starts_at
 
   scope :overlapping, -> (start_time:, end_time:, negate: false) do
     query = <<-SQL.strip_heredoc
@@ -128,5 +145,41 @@ class ClassAppointment < ApplicationRecord
   def teacher_has_hourly_price
     return if teacher.hourly_price.present?
     errors.add :base, :teacher_does_not_have_hourly_price
+  end
+
+  def schedulle_status_fixing
+    self.class::StatusFixerJob.tap do |worker|
+      worker.set(wait_until: starts_at).perform_later(self)
+      worker.set(wait_until: ends_at).perform_later(self)
+    end
+  end
+
+  def fix_status
+    return if new_record?
+
+    if starts_at <= Time.now && ends_at >= Time.now
+      confirmed? ? set_live : cancel
+    elsif ends_at >= Time.now
+      live? ? expire : cancel
+    end
+  end
+
+  def fix_status!
+    fix_status!
+    save!
+  end
+
+  def notify_creation
+    ClassAppointmentsMailer.creation_notification(self).deliver_later
+  end
+
+  def notify_confirmation
+    return unless previous_changes.key?(:status) && confirmed?
+    ClassAppointmentsMailer.confirmation_notification(self).deliver_later
+  end
+
+  def notify_cancelation
+    return unless previous_changes.key?(:status) && canceled?
+    ClassAppointmentsMailer.cancelation_notification(self).deliver_later
   end
 end

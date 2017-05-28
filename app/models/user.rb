@@ -2,7 +2,7 @@ class User < ApplicationRecord
   has_attached_file :avatar, styles: {original: '250x250#'}
 
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+    :recoverable, :rememberable, :trackable, :validatable
 
   with_options dependent: :destroy do
     with_options class_name: :ClassAppointment do
@@ -11,11 +11,15 @@ class User < ApplicationRecord
     end
 
     with_options inverse_of: :user do
-      has_many :taught_subjects, class_name: :TaughtSubject
+      has_many :study_subject_links, class_name: :"StudySubject::Link"
       has_many :availability_periods
       has_one :location
       has_one :mercado_pago_credential, autosave: true
     end
+
+    has_many :taught_subjects,
+      through: :study_subject_links,
+      source:  :study_subject
   end
 
   with_options reject_if: :all_blank do

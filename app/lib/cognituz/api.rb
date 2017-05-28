@@ -38,7 +38,7 @@ class Cognituz::API < Grape::API
   mount self::Auth
   mount self::Users
   mount self::ContactForms
-  mount self::SubjectGroups
+  mount self::StudySubjects
   mount self::Neighborhoods
   mount self::ClassAppointments
   mount self::MercadoPago

@@ -16,11 +16,8 @@ class Cognituz::API::Users < Grape::API
           :teaches_at_public_place,
           coerce: Boolean
 
-        optional :taught_subjects, type: Array do
-          requires :name, :level, type: String
-        end
-
-        optional :neighborhoods, type: Array
+        optional :taught_subject_ids, type: Array[Integer]
+        optional :neighborhoods, type: Array[String]
       end
     end
 
@@ -32,7 +29,7 @@ class Cognituz::API::Users < Grape::API
         :location,
         :mercado_pago_credential
       )
-      users      = User::Search.run(base_query, filters).all
+      users = User::Search.run(base_query, filters).all
 
       present paginate(users), with: ENTITY
     end
@@ -58,13 +55,7 @@ class Cognituz::API::Users < Grape::API
           end
 
           optional :neighborhoods, type: Array
-
-          optional :taught_subjects_attributes, type: Array do
-            optional :id
-            optional :_destroy, coerce: Boolean
-            optional :name, :level, type: String
-          end
-
+          optional :taught_subject_ids, type: Array[Integer]
           optional :availability_periods_attributes, type: Array do
             optional :id, :week_day, :starts_at_sfsow, :ends_at_sfsow, coerce: Integer
             optional :_destroy, coerce: Boolean

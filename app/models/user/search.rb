@@ -19,25 +19,15 @@ module User::Search
     array_intersects query, :neighborhoods, neighborhoods
   end
 
-  filter :taught_subjects do |query, params|
-    taught_subjects = params[:taught_subjects]
-    next query unless taught_subjects.present? && taught_subjects.any?
+  filter :taught_subject_ids do |query, params|
+    taught_subject_ids = params[:taught_subject_ids]
+    next query unless taught_subject_ids.present? && taught_subject_ids.any?
 
-    query.joins(:taught_subjects).distinct.where.has do |u|
-      taught_subjects.inject(nil) do |memo, ts|
-        ts           = ts.with_indifferent_access
-        target_name  = ts.fetch(:name)
-        target_level = ts.fetch(:level).presence
-
-        fragment =
-          (
-            (u.taught_subjects.name == target_name) &
-            (u.taught_subjects.level == target_level)
-          )
-
-        memo ? memo | fragment : fragment
-      end
-    end
+    query
+      .joins(:taught_subject_links)
+      .where(user_taught_subject_links: {
+        study_subject_id: taught_subject_ids
+      })
   end
 
   def self.array_intersects(query, field, values)

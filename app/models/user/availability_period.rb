@@ -10,8 +10,18 @@ class User::AvailabilityPeriod < ApplicationRecord
     end_sfsow   = Cognituz::SFSOW.for_date(date_range.last)
 
     where.has do
-      (starts_at_sfsow <= start_sfsow) |
+      (starts_at_sfsow <= start_sfsow) &
       (ends_at_sfsow >= end_sfsow)
+    end
+  end
+
+  scope :contained_within, ->(date_range) do
+    start_sfsow = Cognituz::SFSOW.for_date date_range.first
+    end_sfsow   = Cognituz::SFSOW.for_date date_range.last
+
+    where.has do
+      (starts_at_sfsow >= start_sfsow) &
+      (ends_at_sfsow <= end_sfsow)
     end
   end
 end

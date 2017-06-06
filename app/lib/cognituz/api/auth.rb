@@ -31,11 +31,13 @@ class Cognituz::API::Auth < Grape::API
       user.save!
     end
 
+    params :signup_params do
+      requires :email, :password, type: String
+    end
+
     params :login_credentials do
-      with type: String do
-        requires :email, :password
-        optional :user_type
-      end
+      use :signup_params
+      optional :user_type, type: String, default: :student
     end
   end
 
@@ -74,10 +76,14 @@ class Cognituz::API::Auth < Grape::API
       end
     end
 
-    params { use :login_credentials }
+    params { use :signup_params }
     post '/signup' do
-      user = User.new declared(params)
-      set_user_defaults(user)
+      user = User.new(
+        email:    declared(params).fetch(:email),
+        password: declared(params).fetch(:password),
+        roles:    %i[student]
+      )
+      user.save!
       status :created
       { token: Cognituz::API::JWT.encode_user(user) }
     end

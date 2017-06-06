@@ -33,6 +33,7 @@ gem 'baby_squeel'
 gem 'state_machines'
 gem 'state_machines-activerecord'
 gem 'validates_timeliness', '~> 4.0'
+gem 'active_record_union'
 
 # Debugging
 gem 'pry-rails'

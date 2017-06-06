@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include self::Scopes
+
   has_attached_file :avatar, styles: {original: '250x250#'}
 
   devise :database_authenticatable, :registerable,
@@ -24,11 +26,10 @@ class User < ApplicationRecord
 
   with_options reject_if: :all_blank do
     accepts_nested_attributes_for :location, :mercado_pago_credential
-    accepts_nested_attributes_for(
+    accepts_nested_attributes_for \
       :taught_subjects,
       :availability_periods,
       allow_destroy: true
-    )
   end
 
   validates :email, presence: true

@@ -49,7 +49,7 @@ module DummySeeder
       long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' '),
       hourly_price:              rand(12..250) * 10,
       taught_subject_ids:        StudySubject.reorder('RANDOM()').first(rand(1..5)).pluck(:id),
-      availability_periods_attributes: (0..6).map do |day|
+      availability_periods_attributes: (1..5).map do |day|
         offset = 3 * 60 * 60
 
         {

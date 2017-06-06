@@ -8,7 +8,6 @@ class ClassAppointment < ApplicationRecord
   after_commit :notify_confirmation
   after_commit :notify_cancelation
 
-
   state_machine :status, initial: :unconfirmed do
     state :unconfirmed, :confirmed, :live do
       validate :teacher_is_available
@@ -63,7 +62,10 @@ class ClassAppointment < ApplicationRecord
   validates :place_desc, presence: true, if: :at_public_place?
   validates_datetime :ends_at, on_or_after: :starts_at
 
-  scope :overlapping, -> (start_time:, end_time:, negate: false) do
+  scope :overlapping, -> (date_range, negate: false) do
+    start_time = date_range.first
+    end_time = date_range.last
+
     query = <<-SQL.strip_heredoc
       #{'NOT' if negate}
       (#{table_name}."starts_at",
@@ -73,6 +75,10 @@ class ClassAppointment < ApplicationRecord
     where(query, start_time, end_time)
   end
 
+  scope :not_overlapping, ->(date_range) do
+    overlapping date_range, negate: true
+  end
+
   scope :overlapping_appointment, -> (a) do
     return none unless [a.starts_at, a.ends_at].all?(&:present?)
 
@@ -80,11 +86,8 @@ class ClassAppointment < ApplicationRecord
       (teacher_id == a.teacher_id || a.teacher.try(:id)) |
       (student_id == a.student_id || a.student.try(:id))
     end
-    .overlapping(
-      start_time: a.starts_at,
-      end_time:   a.ends_at
-    )
-    .where.not id: a.id
+    .overlapping(a.starts_at..a.ends_at)
+    .where.not(id: a.id)
   end
 
   # Represents duration in hours

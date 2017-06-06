@@ -61,7 +61,8 @@ class Cognituz::API::Users < Grape::API
           optional :neighborhoods, type: Array
           optional :taught_subject_ids, type: Array[Integer]
           optional :availability_periods_attributes, type: Array do
-            optional :id, :starts_at, :ends_at, coerce: Integer
+            optional :id, :week_day, coerce: Integer
+            requires :starts_at, :ends_at, coerce: DateTime
             optional :_destroy, coerce: Boolean
           end
         end

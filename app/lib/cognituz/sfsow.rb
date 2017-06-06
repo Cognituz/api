@@ -14,8 +14,8 @@ module Cognituz::SFSOW
 
   def self.from_metadata(
     offset: Time.zone.utc_offset,
-    wday:, hour:, min: 0
+    wday:, hour:, min: 0, sec: 0
   )
-    wday.days + hour.hours + min.minutes - offset
+    wday.days + hour.hours + min.minutes + sec - offset
   end
 end

@@ -37,7 +37,7 @@ module User::Search
     date     = opts.fetch(:date)
     duration = opts.fetch(:duration)
 
-    User.available_at date..date.+(duration.hours)
+    User.search_by_availability date..date.+(duration.hours)
   end
 
   def self.array_intersects(query, field, values)

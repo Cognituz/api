@@ -3,7 +3,8 @@
 # sfsow stands for "seconds from start of week", given the starting day is sunday
 class User::AvailabilityPeriod < ApplicationRecord
   belongs_to :user, inverse_of: :availability_periods
-  validates :starts_at_sfsow, :ends_at_sfsow, :user, presence: true
+
+  validates :starts_at_sfsow, :ends_at_sfsow, presence: true
 
   scope :containing, -> (date_range) do
     start_sfsow = Cognituz::SFSOW.for_date(date_range.first)
@@ -22,6 +23,20 @@ class User::AvailabilityPeriod < ApplicationRecord
     where.has do
       (starts_at_sfsow >= start_sfsow) &
       (ends_at_sfsow <= end_sfsow)
+    end
+  end
+
+  def starts_at=(arg)
+    case arg
+    when DateTime, Time
+      self.starts_at_sfsow = Cognituz::SFSOW.for_date(arg)
+    end
+  end
+
+  def ends_at=(arg)
+    case arg
+    when DateTime, Time
+      self.ends_at_sfsow = Cognituz::SFSOW.for_date(arg)
     end
   end
 end

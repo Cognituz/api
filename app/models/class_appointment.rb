@@ -21,7 +21,7 @@ class ClassAppointment < ApplicationRecord
 
     state :confirmed do
       #validates :mercadopago_payment_id, presence: true
-      validates_datetime :starts_at, on_or_after: -> { Time.now }, on: :create
+      validates_datetime :starts_at, on_or_after: -> { Time.now }
     end
 
     state :live do
@@ -37,7 +37,7 @@ class ClassAppointment < ApplicationRecord
 
     event(:confirm)  { transition unconfirmed: :confirmed }
     event(:set_live) { transition confirmed: :live }
-    event(:expire)   { transition all - %i[ex pired canceled] => :expired }
+    event(:expire)   { transition all - %i[expired canceled] => :expired }
     event(:cancel)   { transition all - %i[canceled] => :canceled }
   end
 
@@ -124,6 +124,23 @@ class ClassAppointment < ApplicationRecord
       ).create!
   end
 
+  def fix_status
+    return if new_record?
+
+    if starts_at <= Time.now && ends_at >= Time.now
+      return if live?
+      confirmed? ? set_live : cancel
+    elsif ends_at >= Time.now
+      return if expired?
+      live? ? expire : cancel
+    end
+  end
+
+  def fix_status!
+    fix_status
+    save!
+  end
+
   private
 
   # Combines duration and starts_at to set ends_at
@@ -155,21 +172,6 @@ class ClassAppointment < ApplicationRecord
       worker.set(wait_until: starts_at).perform_later(self)
       worker.set(wait_until: ends_at).perform_later(self)
     end
-  end
-
-  def fix_status
-    return if new_record?
-
-    if starts_at <= Time.now && ends_at >= Time.now
-      confirmed? ? set_live : cancel
-    elsif ends_at >= Time.now
-      live? ? expire : cancel
-    end
-  end
-
-  def fix_status!
-    fix_status!
-    save!
   end
 
   def notify_creation

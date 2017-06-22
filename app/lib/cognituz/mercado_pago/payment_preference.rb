@@ -1,3 +1,4 @@
+# Acts as a model. Actually generates payment preferences using MercadoPago API.
 require 'mercadopago.rb'
 
 module Cognituz
@@ -58,10 +59,10 @@ module Cognituz
         @fee_amount ||= items_for_mp.sum { |i| i.fetch(:unit_price) } / 100.0 * EDUCANDOANDO_FEE
       end
 
-      def client
+      def client()
         @client ||=
-          ::MercadoPago.new(access_token).tap do |client|
-            client.sandbox_mode(true) unless Rails.env.production?
+          ::MercadoPago.new(access_token).tap do |c|
+            c.sandbox_mode(false)
           end
       end
     end

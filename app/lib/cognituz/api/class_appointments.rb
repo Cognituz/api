@@ -52,6 +52,9 @@ class Cognituz::API::ClassAppointments < Grape::API
     end
 
     route_param :id do
+      desc "Retrieves a single class appointment"
+      get { present ClassAppointment.find(params.fetch(:id)), with: ENTITY }
+
       desc "Triggers a transitional event for for the given class appointment"
       params do
         event_names =

@@ -49,13 +49,13 @@ module DummySeeder
       long_desc:                 Faker::Lorem.sentences(rand(2..3)).join(' '),
       hourly_price:              rand(12..250) * 10,
       taught_subject_ids:        StudySubject.reorder('RANDOM()').first(rand(1..5)).pluck(:id),
-      availability_periods_attributes: (1..5).map do |day|
-        offset = 3 * 60 * 60
+      availability_periods_attributes: (1..5).map do |n|
+        sunday = Time.new(2017, 03, 26, 0, 0, 0 , -3.hours)
 
         {
-          week_day:        day,
-          starts_at_sfsow: (day * 24 * 60 * 60) + (8 * 60 * 60) - offset,
-          ends_at_sfsow:   (day * 24 * 60 * 60) + (20 * 60 * 60) - offset
+          week_day:  n,
+          starts_at: sunday.advance(days: n.days, hours: 8),
+          ends_at:   sunday.advance(days: n.days, hours: 16)
         }
       end,
     }.merge(attributes))

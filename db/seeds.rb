@@ -1,4 +1,4 @@
-ActiveRecord::Base.transaction do
+def seed_study_subjects
   return if StudySubject.any?
 
   StudySubject.destroy_all
@@ -53,4 +53,8 @@ ActiveRecord::Base.transaction do
       )
     end
   end
+end
+
+ActiveRecord::Base.transaction do
+  seed_study_subjects
 end

@@ -4,9 +4,8 @@ class Cognituz::API::ClassAppointments < Grape::API
 
   ENTITY = Cognituz::API::Entities::ClassAppointment
 
-  resources :class_appointments do
-    desc "Creates a class appointment between a student and a teacher"
-    params do
+  helpers do
+    params :class_appointment_attributes do
       group :class_appointment, type: Hash, default: {} do
         requires :teacher_id, :student_id, :duration, coerce: Integer
         requires :starts_at, coerce: DateTime
@@ -21,18 +20,16 @@ class Cognituz::API::ClassAppointments < Grape::API
         optional :attachments_attributes, type: Array do
           requires :content
         end
+
+        optional :whiteboard_signals_attributes, type: Array do
+          requires :function_name, type: String
+          requires :args, type: Array
+          requires :date, coerce: DateTime
+        end
       end
     end
-    post do
-      attributes = declared(params).fetch(:class_appointment)
-      appointment = ClassAppointment.new(attributes)
-      appointment.save!
-      appointment.generate_payment_preference!
-      present appointment, with: ENTITY
-    end
 
-    desc "Retrieves a list of appointments for a teacher or student"
-    params do
+    params :class_appointment_filters do
       optional :filters, type: Hash, default: {} do
         status_names =
           ClassAppointment
@@ -43,6 +40,21 @@ class Cognituz::API::ClassAppointments < Grape::API
         optional :status, type: String, values: status_names
       end
     end
+  end
+
+  resources :class_appointments do
+    desc "Creates a class appointment between a student and a teacher"
+    params { use :class_appointment_attributes }
+    post do
+      attributes = declared(params).fetch(:class_appointment)
+      appointment = ClassAppointment.new(attributes)
+      appointment.save!
+      appointment.generate_payment_preference!
+      present appointment, with: ENTITY
+    end
+
+    desc "Retrieves a list of appointments for a teacher or student"
+    params { use :class_appointment_filters }
     get do
       filters    = declared(params, include_missing: false).fetch(:filters)
       base_query = ClassAppointment.all
@@ -55,6 +67,15 @@ class Cognituz::API::ClassAppointments < Grape::API
       desc "Retrieves a single class appointment"
       get { present ClassAppointment.find(params.fetch(:id)), with: ENTITY }
 
+      desc "Updates an appointment"
+      params { use :class_appointment_attributes }
+      put do
+        attributes = declared(params).fetch(:class_appointment)
+        appointment = ClassAppointment.find(params.fetch(:id))
+        appointment.update!(attributes)
+        present appointment, with: ENTITY
+      end
+
       desc "Triggers a transitional event for for the given class appointment"
       params do
         event_names =
@@ -64,7 +85,6 @@ class Cognituz::API::ClassAppointments < Grape::API
 
         requires :event, type: String, values: event_names
       end
-
       put "/transition" do
         appointment = ClassAppointment.find params.fetch(:id)
         transition_name = declared(params).fetch(:event)

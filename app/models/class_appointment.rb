@@ -34,6 +34,11 @@ class ClassAppointment < ApplicationRecord
     end
 
     state :canceled
+    state :demo
+
+    state all - %i[demo] do
+      validates_datetime :ends_at, on_or_after: :starts_at
+    end
 
     event(:confirm)  { transition unconfirmed: :confirmed }
     event(:set_live) { transition confirmed: :live }
@@ -57,11 +62,10 @@ class ClassAppointment < ApplicationRecord
   has_many :study_subjects, through: :study_subject_links
   has_many :whiteboard_signals
 
-  accepts_nested_attributes_for :attachments
+  accepts_nested_attributes_for :attachments, :whiteboard_signals, reject_if: :all_blank
 
   validates :teacher, :student, :starts_at, :ends_at, :kind, presence: true
   validates :place_desc, presence: true, if: :at_public_place?
-  validates_datetime :ends_at, on_or_after: :starts_at
 
   scope :overlapping, -> (date_range, negate: false) do
     start_time = date_range.first
@@ -127,6 +131,10 @@ class ClassAppointment < ApplicationRecord
 
   def fix_status
     return if new_record?
+
+    case Time.now
+    when starts_at..ends_at
+    end
 
     if starts_at <= Time.now && ends_at >= Time.now
       return if live?

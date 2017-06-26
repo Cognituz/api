@@ -143,7 +143,8 @@ ActiveRecord::Schema.define(version: 20170625235442) do
   end
 
   create_table "whiteboard_signals", force: :cascade do |t|
-    t.json     "data",                 null: false
+    t.string   "function_name",        null: false
+    t.json     "args",                 null: false
     t.datetime "date",                 null: false
     t.integer  "class_appointment_id", null: false
     t.datetime "created_at",           null: false

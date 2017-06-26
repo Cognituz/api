@@ -42,5 +42,4 @@ class Cognituz::API < Grape::API
   mount self::Neighborhoods
   mount self::ClassAppointments
   mount self::MercadoPago
-  mount self::WhiteboardSignals
 end

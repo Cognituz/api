@@ -3,5 +3,6 @@
 # the whiteboard code decides to store via this model.
 class WhiteboardSignal < ApplicationRecord
   belongs_to :class_appointment
-  validates :data, :date, presence: true
+  validates :function_name, :args, :date, presence: true
+  default_scope { order(date: :asc) }
 end

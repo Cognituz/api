@@ -55,6 +55,7 @@ class ClassAppointment < ApplicationRecord
   end
 
   has_many :study_subjects, through: :study_subject_links
+  has_many :whiteboard_signals
 
   accepts_nested_attributes_for :attachments
 

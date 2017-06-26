@@ -1,4 +1,6 @@
 ActiveRecord::Base.transaction do
+  return if StudySubject.any?
+
   StudySubject.destroy_all
 
   {

@@ -36,7 +36,7 @@ module CogituzApi
     config.action_mailer.asset_host     = config.host
     config.action_mailer.default_url_options = {host: ENV.fetch('HOST')}
 
-    config.api_only = true
+    config.api_only = false
 
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
     config.autoload_paths += %W(#{config.root}/lib)

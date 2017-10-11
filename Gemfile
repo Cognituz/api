@@ -46,6 +46,9 @@ gem 'devise'
 # Payment
 gem "mercadopago-sdk"
 
+# Admin
+gem 'activeadmin'
+
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'rspec-rails', '~> 3.5.2'

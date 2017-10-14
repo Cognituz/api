@@ -30,6 +30,8 @@ module CogituzApi
     config.database_port       = ENV["DATABASE_PORT"] || 5432
     config.database_name       = ENV["DATABASE_NAME"] || 'cognituz_api_development'
     config.mailgun_key         = ENV["MAILGUN_KEY"] || 'key-47138ef6c5f3fc76f9ace61382ff283a'
+    config.mailgun_password    = ENV["MAILGUN_PASSWORD"] || 'key-47138ef6c5f3fc76f9ace61382ff283a'
+    config.mailgun_user        = ENV["MAILGUN_USER"] || 'key-47138ef6c5f3fc76f9ace61382ff283a'
     config.mailgun_domain      = ENV["MAILGUN_DOMAIN"] || 'sandbox5a2faf4d9a564760bb2f03073ef1e2c2.mailgun.org'
 
     config.action_controller.asset_host = config.host

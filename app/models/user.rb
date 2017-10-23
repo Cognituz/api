@@ -36,7 +36,7 @@ class User < ApplicationRecord
   validates_attachment_content_type :avatar,
     content_type: %w[image/jpg image/jpeg image/png image/gif]
 
-  after_create :invitation_email
+  after_create :confirm_email
 
   def name=(str)
     match = str.match(/(?<first_name>.+)\s(?<last_name>\w+)+$/)
@@ -55,9 +55,11 @@ class User < ApplicationRecord
 
   def name() [first_name, last_name].join(' ') end
 
-  def invitation_email
+  def confirm_email
     if roles.try(:include?, 'teacher')
       UsersMailer.teacher_invite(id).deliver_now
+    elsif roles.try(:include?, 'student')
+      UsersMailer.student_confirm(id).deliver_now
     end
   end
 end

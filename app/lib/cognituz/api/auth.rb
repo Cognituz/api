@@ -37,7 +37,7 @@ class Cognituz::API::Auth < Grape::API
 
     params :login_credentials do
       use :signup_params
-      optional :user_type, type: String, default: :student
+      optional :user_type, type: String
     end
   end
 

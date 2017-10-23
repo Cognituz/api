@@ -13,7 +13,7 @@ class Cognituz::API::MercadoPago::Auth < Grape::API
         Rails.application.config.host,
         v1_mercado_pago_auth_callback_path
       )
-
+      
       URI(AUTHORIZATION_ENDPOINT).tap do |u|
         u.query = {
           client_id:     Rails.application.config.mercado_pago_id,
@@ -22,6 +22,7 @@ class Cognituz::API::MercadoPago::Auth < Grape::API
           redirect_uri:  callback_url
         }.to_query
       end.to_s
+
     end
 
     def callback_url

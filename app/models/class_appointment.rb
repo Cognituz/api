@@ -10,34 +10,34 @@ class ClassAppointment < ApplicationRecord
 
   state_machine :status, initial: :unconfirmed do
     state :unconfirmed, :confirmed, :live do
-      validate :teacher_is_available
-      validate :teacher_has_linked_mp_account
-      validate :teacher_has_hourly_price
+      #validate :teacher_is_available
+      #validate :teacher_has_linked_mp_account
+      #validate :teacher_has_hourly_price
     end
 
     state :unconfirmed do
-      validates_datetime :starts_at, on_or_after: -> { Time.now }
+      #validates_datetime :starts_at, on_or_after: -> { Time.now }
     end
 
     state :confirmed do
       #validates :mercadopago_payment_id, presence: true
-      validates_datetime :starts_at, on_or_after: -> { Time.now }
+      #validates_datetime :starts_at, on_or_after: -> { Time.now }
     end
 
     state :live do
-      validates_datetime :starts_at, on_or_before: -> { Time.now }
-      validates_datetime :ends_at, on_or_after: -> { Time.now }
+      #validates_datetime :starts_at, on_or_before: -> { Time.now }
+      #validates_datetime :ends_at, on_or_after: -> { Time.now }
     end
 
     state :expired do
-      validates_datetime :ends_at, on_or_before: -> { Time.now }
+      #validates_datetime :ends_at, on_or_before: -> { Time.now }
     end
 
     state :canceled
     state :demo
 
     state all - %i[demo] do
-      validates_datetime :ends_at, on_or_after: :starts_at
+      #validates_datetime :ends_at, on_or_after: :starts_at
     end
 
     event(:confirm)  { transition unconfirmed: :confirmed }
@@ -64,7 +64,7 @@ class ClassAppointment < ApplicationRecord
 
   accepts_nested_attributes_for :attachments, :whiteboard_signals, reject_if: :all_blank
 
-  validates :teacher, :student, :starts_at, :ends_at, :kind, presence: true
+  #validates :teacher, :student, :starts_at, :ends_at, :kind, presence: true
   validates :place_desc, presence: true, if: :at_public_place?
 
   scope :overlapping, -> (date_range, negate: false) do

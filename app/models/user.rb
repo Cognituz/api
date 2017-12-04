@@ -15,7 +15,7 @@ class User < ApplicationRecord
     with_options inverse_of: :user do
       has_many :study_subject_links, class_name: :"StudySubject::Link"
       has_many :availability_periods
-      has_one :location
+      has_many :locations
       has_one :mercado_pago_credential, autosave: true
     end
 
@@ -25,7 +25,7 @@ class User < ApplicationRecord
   end
 
   with_options reject_if: :all_blank do
-    accepts_nested_attributes_for :location, :mercado_pago_credential
+    accepts_nested_attributes_for :locations, :mercado_pago_credential
     accepts_nested_attributes_for \
       :taught_subjects,
       :availability_periods,
@@ -56,10 +56,6 @@ class User < ApplicationRecord
   def name() [first_name, last_name].join(' ') end
 
   def confirm_email
-    if roles.try(:include?, 'teacher')
-      UsersMailer.teacher_invite(id).deliver_now
-    elsif roles.try(:include?, 'student')
-      UsersMailer.student_confirm(id).deliver_now
-    end
+    UsersMailer.teacher_invite(id).deliver_now
   end
 end

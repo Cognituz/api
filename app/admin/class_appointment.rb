@@ -13,6 +13,7 @@ ActiveAdmin.register ClassAppointment do
     column :student_id
     column :status
     column :created_at
+    column() {|appointment| link_to 'Vivo', "http://localhost:3333/app/s/clases/#{appointment.id}/aula_virtual"}
     actions
   end
 

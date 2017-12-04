@@ -1,3 +1,9 @@
-<p>Has sido invitado como Profesor en Cognituz! Para continuar hace click en el siguiente link:<p>
-<br>
-<a href="#">Ir a Cognituz</a>
+<% if @user.roles.try(:include?, 'teacher') %>
+  <p>Has sido invitado como Profesor en Cognituz! Para continuar hace click en el siguiente link:<p>
+  <br>
+  <a href="#">Ir a Cognituz</a>
+<% else %>
+  <p>Gracias por registrate en Cognituz! Para confirmar tu email hace click en el siguiente link</p>
+  <br>
+  <a href="http://localhost:3000">Ir a Cognituz</a>
+<% end %>

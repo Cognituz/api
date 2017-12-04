@@ -30,9 +30,9 @@ class Cognituz::API::Users < Grape::API
       base_query = User.includes(
         :taught_subjects,
         :availability_periods,
-        :location,
+        :locations,
         :mercado_pago_credential
-      )
+      ).where.not(locations: { name: nil})
       users = User::Search.run(base_query, filters).all
 
       present paginate(users), with: ENTITY
@@ -52,11 +52,6 @@ class Cognituz::API::Users < Grape::API
           optional :teaches_online, :teaches_at_own_place,
             :teaches_at_students_place, :teaches_at_public_place,
             coerce: Boolean
-
-          optional :location_attributes, type: Hash, default: {} do
-            optional :id, :city, :neighborhood,
-              :street, :street_number, :notes
-          end
 
           optional :neighborhoods, type: Array
           optional :taught_subject_ids, type: Array[Integer]

@@ -8,7 +8,7 @@ class Cognituz::API::Entities::User < Cognituz::API::Entities::Base
 
   expose :avatar, format_with: :attachment
 
-  expose :location,             using: Cognituz::API::Entities::Location
+  expose :locations,             using: Cognituz::API::Entities::Location
   expose :taught_subjects,      using: Cognituz::API::Entities::StudySubject
   expose :availability_periods, using: self::AvailabilityPeriod
 

@@ -5,7 +5,7 @@ class Cognituz::API::Locations < Grape::API
 
   helpers do
     params :location_attributes do
-      group :locations, type: Hash, default: {} do
+      group :location, type: Hash, default: {} do
         requires :name, type: String
         requires :address, type: String
         requires :radius, type: Integer
@@ -20,7 +20,7 @@ class Cognituz::API::Locations < Grape::API
     desc "Creates a new location"
     params { use :location_attributes }
     post do
-      attributes = declared(params).fetch(:locations)
+      attributes = declared(params).fetch(:location)
       location = Location.new(attributes)
       location.save!
       present location, with: ENTITY

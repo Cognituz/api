@@ -6,6 +6,7 @@ module Setup
   def self.perform
     locking do
       %w[
+        db:create
         db:migrate
         db:seed
         assets:clean

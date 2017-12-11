@@ -1,5 +1,6 @@
 ActiveAdmin.register ClassAppointment do
-  permit_params :kind, :place_desc, :desc, :teacher_id, :student_id, :status
+  permit_params :kind, :place_desc, :desc, :teacher_id, :student_id, :status,
+    :starts_at, :ends_at
 
   menu label: 'Clases', priority: 2
 
@@ -12,6 +13,8 @@ ActiveAdmin.register ClassAppointment do
     column :teacher_id
     column :student_id
     column :status
+    column :starts_at
+    column :ends_at
     column :created_at
     column() {|appointment| link_to 'Vivo', "http://localhost:3333/app/s/clases/#{appointment.id}/aula_virtual"}
     actions
@@ -23,6 +26,8 @@ ActiveAdmin.register ClassAppointment do
   filter :teacher_id
   filter :student_id
   filter :status
+  filter :starts_at
+  filter :ends_at
 
   form do |f|
     f.inputs do
@@ -31,6 +36,8 @@ ActiveAdmin.register ClassAppointment do
       f.input :desc
       f.input :teacher_id
       f.input :student_id
+      f.input :starts_at
+      f.input :ends_at
       f.input :status
     end
     f.actions

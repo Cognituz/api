@@ -54,6 +54,7 @@ class Cognituz::API::Users < Grape::API
             coerce: Boolean
 
           optional :neighborhoods, type: Array
+          optional :price, type: Integer
           optional :taught_subject_ids, type: Array[Integer]
           optional :availability_periods_attributes, type: Array do
             optional :id, :week_day, coerce: Integer

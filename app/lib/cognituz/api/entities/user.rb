@@ -4,7 +4,8 @@ class Cognituz::API::Entities::User < Cognituz::API::Entities::Base
     :teaches_at_own_place, :teaches_at_public_place,
     :teaches_at_students_place, :is_teacher, :is_student,
     :neighborhoods, :short_desc, :long_desc, :name,
-    :linked_mercado_pago_account, :hourly_price, :taught_subject_ids
+    :linked_mercado_pago_account, :hourly_price, :taught_subject_ids,
+    :price
 
   expose :avatar, format_with: :attachment
 

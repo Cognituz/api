@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171025140028) do
+ActiveRecord::Schema.define(version: 20171210234457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,12 @@ ActiveRecord::Schema.define(version: 20171025140028) do
     t.index ["starts_at"], name: "index_class_appointments_on_starts_at", using: :btree
     t.index ["student_id"], name: "index_class_appointments_on_student_id", using: :btree
     t.index ["teacher_id"], name: "index_class_appointments_on_teacher_id", using: :btree
+  end
+
+  create_table "defaults", force: :cascade do |t|
+    t.float    "hourly_price"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "locations", force: :cascade do |t|
@@ -168,6 +174,7 @@ ActiveRecord::Schema.define(version: 20171025140028) do
     t.text     "long_desc"
     t.integer  "mercado_pago_user_id"
     t.decimal  "hourly_price"
+    t.float    "price"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree

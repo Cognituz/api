@@ -30,15 +30,6 @@ module User::Search
       })
   end
 
-  filter :available_at do |query, params|
-    opts = params[:available_at]
-    next query unless opts.present? && opts.is_a?(Hash)
-
-    date     = opts.fetch(:date)
-    duration = opts.fetch(:duration)
-
-    User.search_by_availability date..date.+(duration.hours)
-  end
 
   def self.array_intersects(query, field, values)
     array_str = values.map { |n| "'#{n}'" }.join(', ')

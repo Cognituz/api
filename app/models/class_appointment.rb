@@ -20,7 +20,7 @@ class ClassAppointment < ApplicationRecord
     end
 
     state :confirmed do
-      validates :mercadopago_payment_id, presence: true
+      #validates :mercadopago_payment_id, presence: true
       validates_datetime :starts_at, on_or_after: -> { Time.now }
     end
 

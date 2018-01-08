@@ -32,7 +32,7 @@ class Cognituz::API::Users < Grape::API
         :availability_periods,
         :locations,
         :mercado_pago_credential
-      ).where.not(locations: { name: nil})
+      ).where.not(hourly_price: nil, locations: { name: nil})
       users = User::Search.run(base_query, filters).all
 
       present paginate(users), with: ENTITY
@@ -54,7 +54,7 @@ class Cognituz::API::Users < Grape::API
             coerce: Boolean
 
           optional :neighborhoods, type: Array
-          optional :price, type: Integer
+          optional :hourly_price, type: Integer
           optional :taught_subject_ids, type: Array[Integer]
           optional :availability_periods_attributes, type: Array do
             optional :id, :week_day, coerce: Integer

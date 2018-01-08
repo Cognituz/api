@@ -16,7 +16,7 @@ ActiveAdmin.register ClassAppointment do
     column :starts_at
     column :ends_at
     column :created_at
-    column() {|appointment| link_to 'Vivo', "http://localhost:3333/app/s/clases/#{appointment.id}/aula_virtual"}
+    column() {|appointment| link_to 'Vivo', "http://staging.cognituz.com/app/s/clases/#{appointment.id}/aula_virtual"}
     actions
   end
 

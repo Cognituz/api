@@ -24,9 +24,9 @@ module User::Search
     next query unless taught_subject_ids.present? && taught_subject_ids.any?
 
     query
-      .joins(:taught_subject_links)
-      .where(user_taught_subject_links: {
-        study_subject_id: taught_subject_ids
+      .joins(:taught_subjects)
+      .where(study_subjects: {
+        id: taught_subject_ids
       })
   end
 

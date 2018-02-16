@@ -2,7 +2,7 @@ class Cognituz::API::Entities::User::AvailabilityPeriod <  Cognituz::API::Entiti
   SUNDAY = Time.new(2017, 03, 26, 0, 0, 0 ,0) # Any sunday will do
 
   expose :id, :starts_at_sfsow, :ends_at_sfsow,
-    :starts_at, :ends_at, :week_day
+    :starts_at, :ends_at, :week_day, :location_id
 
   private
 

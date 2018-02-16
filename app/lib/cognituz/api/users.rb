@@ -59,6 +59,7 @@ class Cognituz::API::Users < Grape::API
           optional :availability_periods_attributes, type: Array do
             optional :id, :week_day, coerce: Integer
             requires :starts_at, :ends_at, coerce: DateTime
+            requires :location_id
             optional :_destroy, coerce: Boolean
           end
         end

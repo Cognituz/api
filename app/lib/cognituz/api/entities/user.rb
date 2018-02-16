@@ -17,4 +17,8 @@ class Cognituz::API::Entities::User < Cognituz::API::Entities::Base
   def linked_mercado_pago_account() object.mercado_pago_credential.present? end
   def is_teacher() object.roles.try(:include?, 'teacher') end
   def is_student() object.roles.try(:include?, 'student') end
+
+  def hourly_price
+    object.hourly_price.to_i
+  end
 end

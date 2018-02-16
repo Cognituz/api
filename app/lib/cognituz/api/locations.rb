@@ -12,6 +12,7 @@ class Cognituz::API::Locations < Grape::API
         requires :latitude
         requires :longitude
         requires :user_id
+        optional :delete, type: Boolean
       end
     end
   end
@@ -33,9 +34,13 @@ class Cognituz::API::Locations < Grape::API
       desc "Updates a location"
       params { use :location_attributes }
       put do
-        attributes = declared(params).fetch(:locations)
+        attributes = declared(params).fetch(:location)
         location = Location.find(params.fetch(:id))
-        location.update!(attributes)
+        if params.fetch(:location).fetch(:delete)
+          location.destroy!
+        else
+          location.update!(attributes)
+        end
         present location, with: ENTITY
       end
     end

@@ -51,7 +51,7 @@ class Cognituz::API::Auth < Grape::API
 
       user = User.find_or_initialize_by(email: email)
 
-      set_student_defaults(user)
+      set_user_defaults(user)
 
       if user.save
         { token: Cognituz::API::JWT.encode_user(user) }
